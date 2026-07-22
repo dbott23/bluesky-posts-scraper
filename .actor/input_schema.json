@@ -49,6 +49,19 @@
             "type": "boolean",
             "description": "Include reposts when scraping profiles.",
             "default": false
+        },
+        "blueskyIdentifier": {
+            "title": "Bluesky handle or email (required for search)",
+            "type": "string",
+            "description": "Your Bluesky handle (e.g. yourname.bsky.social) or email. Required for keyword search. Profile scraping works without it.",
+            "editor": "textfield"
+        },
+        "blueskyAppPassword": {
+            "title": "Bluesky app password (required for search)",
+            "type": "string",
+            "description": "An app password from Bluesky Settings → Privacy and Security → App Passwords. Never use your main account password.",
+            "editor": "textfield",
+            "isSecret": true
         }
     }
 }

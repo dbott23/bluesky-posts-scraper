@@ -1,4 +1,4 @@
-"""Bluesky scraper using the public AppView API (no auth required)."""
+"""Bluesky scraper using the public AppView API and optional auth for search."""
 
 from __future__ import annotations
 
@@ -7,9 +7,25 @@ from typing import Any
 
 import httpx
 
-API = "https://public.api.bsky.app/xrpc"
+PUBLIC_API = "https://public.api.bsky.app/xrpc"
+AUTH_API = "https://bsky.social/xrpc"
 PAGE_SIZE = 100
 HEADERS = {"User-Agent": "bluesky-posts-scraper/1.0 (Apify actor)"}
+
+
+async def authenticate(client: httpx.AsyncClient, identifier: str, app_password: str) -> str | None:
+    """Create a Bluesky session and return the access JWT, or None on failure."""
+    try:
+        resp = await client.post(
+            f"{AUTH_API}/com.atproto.server.createSession",
+            json={"identifier": identifier, "password": app_password},
+            headers=HEADERS,
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return resp.json().get("accessJwt")
+    except httpx.HTTPError as exc:
+        raise RuntimeError(f"Bluesky authentication failed: {exc}") from exc
 
 
 def _post_url(uri: str, handle: str) -> str:
@@ -39,10 +55,19 @@ def _parse_post(post: dict[str, Any], source: str) -> dict[str, Any]:
     }
 
 
-async def _get(client: httpx.AsyncClient, endpoint: str, params: dict[str, Any]) -> dict[str, Any] | None:
+async def _get(
+    client: httpx.AsyncClient,
+    base_url: str,
+    endpoint: str,
+    params: dict[str, Any],
+    auth_token: str | None = None,
+) -> dict[str, Any] | None:
+    headers = dict(HEADERS)
+    if auth_token:
+        headers["Authorization"] = f"Bearer {auth_token}"
     for attempt in range(3):
         try:
-            resp = await client.get(f"{API}/{endpoint}", params=params, headers=HEADERS, timeout=30)
+            resp = await client.get(f"{base_url}/{endpoint}", params=params, headers=headers, timeout=30)
             if resp.status_code == 429:
                 await asyncio.sleep(5 * (attempt + 1))
                 continue
@@ -61,7 +86,10 @@ async def search_posts(
     max_posts: int,
     sort: str = "latest",
     since: str | None = None,
+    auth_token: str | None = None,
 ) -> list[dict[str, Any]]:
+    # Search requires auth; use bsky.social when token available, public API otherwise
+    base_url = AUTH_API if auth_token else PUBLIC_API
     results: list[dict[str, Any]] = []
     cursor: str | None = None
     while len(results) < max_posts:
@@ -74,7 +102,7 @@ async def search_posts(
             params["since"] = f"{since}T00:00:00Z"
         if cursor:
             params["cursor"] = cursor
-        data = await _get(client, "app.bsky.feed.searchPosts", params)
+        data = await _get(client, base_url, "app.bsky.feed.searchPosts", params, auth_token=auth_token)
         if not data:
             break
         posts = data.get("posts") or []
@@ -107,7 +135,7 @@ async def profile_posts(
         }
         if cursor:
             params["cursor"] = cursor
-        data = await _get(client, "app.bsky.feed.getAuthorFeed", params)
+        data = await _get(client, PUBLIC_API, "app.bsky.feed.getAuthorFeed", params)
         if not data:
             break
         feed = data.get("feed") or []

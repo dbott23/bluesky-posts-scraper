@@ -20,6 +20,9 @@ async def main() -> None:
         include_replies: bool = bool(inp.get("includeReplies"))
         include_reposts: bool = bool(inp.get("includeReposts"))
 
+        identifier: str | None = inp.get("blueskyIdentifier") or None
+        app_password: str | None = inp.get("blueskyAppPassword") or None
+
         if not queries and not profiles:
             await Actor.fail(
                 status_message="Input must include at least one search query or profile handle."
@@ -28,11 +31,27 @@ async def main() -> None:
 
         total = 0
         async with httpx.AsyncClient() as client:
+            auth_token: str | None = None
+            if queries:
+                if identifier and app_password:
+                    Actor.log.info("Authenticating with Bluesky...")
+                    try:
+                        auth_token = await bluesky.authenticate(client, identifier, app_password)
+                        Actor.log.info("Authentication successful.")
+                    except Exception as exc:
+                        await Actor.fail(status_message=f"Authentication failed: {exc}")
+                        return
+                else:
+                    Actor.log.warning(
+                        "No Bluesky credentials provided — search requires authentication. "
+                        "Add blueskyIdentifier and blueskyAppPassword to input."
+                    )
+
             for query in queries:
                 Actor.log.info(f"Searching posts for: {query!r}")
                 try:
                     posts = await bluesky.search_posts(
-                        client, query, max_posts, sort=sort_by, since=since
+                        client, query, max_posts, sort=sort_by, since=since, auth_token=auth_token
                     )
                 except Exception as exc:
                     Actor.log.warning(f"Search failed for {query!r}: {exc}")
