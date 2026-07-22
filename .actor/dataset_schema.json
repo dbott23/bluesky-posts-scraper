@@ -1,0 +1,87 @@
+{
+    "actorSpecification": 1,
+    "fields": {
+        "source": {
+            "title": "Source",
+            "type": "string",
+            "description": "The search query or profile handle this post came from."
+        },
+        "url": {
+            "title": "Post URL",
+            "type": "string",
+            "description": "Link to the post on bsky.app."
+        },
+        "text": {
+            "title": "Text",
+            "type": "string",
+            "description": "Post text content."
+        },
+        "authorHandle": {
+            "title": "Author handle",
+            "type": "string",
+            "description": "Bluesky handle of the author."
+        },
+        "authorDisplayName": {
+            "title": "Author name",
+            "type": "string",
+            "description": "Display name of the author."
+        },
+        "createdAt": {
+            "title": "Created at",
+            "type": "string",
+            "description": "When the post was created (ISO 8601)."
+        },
+        "likeCount": {
+            "title": "Likes",
+            "type": "integer",
+            "description": "Number of likes."
+        },
+        "repostCount": {
+            "title": "Reposts",
+            "type": "integer",
+            "description": "Number of reposts."
+        },
+        "replyCount": {
+            "title": "Replies",
+            "type": "integer",
+            "description": "Number of replies."
+        },
+        "quoteCount": {
+            "title": "Quotes",
+            "type": "integer",
+            "description": "Number of quote posts."
+        },
+        "langs": {
+            "title": "Languages",
+            "type": "array",
+            "description": "Language codes declared on the post."
+        },
+        "uri": {
+            "title": "AT URI",
+            "type": "string",
+            "description": "Canonical at:// URI of the post."
+        }
+    },
+    "views": {
+        "overview": {
+            "title": "Posts",
+            "transformation": {
+                "fields": ["source", "authorHandle", "authorDisplayName", "text", "createdAt", "likeCount", "repostCount", "replyCount", "url"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "source": { "label": "Source", "format": "text" },
+                    "authorHandle": { "label": "Handle", "format": "text" },
+                    "authorDisplayName": { "label": "Author", "format": "text" },
+                    "text": { "label": "Post", "format": "text" },
+                    "createdAt": { "label": "Date", "format": "date" },
+                    "likeCount": { "label": "Likes", "format": "number" },
+                    "repostCount": { "label": "Reposts", "format": "number" },
+                    "replyCount": { "label": "Replies", "format": "number" },
+                    "url": { "label": "Link", "format": "link" }
+                }
+            }
+        }
+    }
+}

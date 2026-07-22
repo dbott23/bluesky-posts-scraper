@@ -1,0 +1,17 @@
+{
+    "actorSpecification": 1,
+    "name": "bluesky-posts-scraper",
+    "title": "Bluesky Posts Scraper",
+    "description": "Scrape Bluesky posts by keyword search or profile. Get post text, author, engagement metrics, and dates.",
+    "version": "0.0",
+    "buildTag": "latest",
+    "input": "./input_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "dockerfile": "./Dockerfile",
+    "defaultRunOptions": {
+        "timeoutSecs": 300,
+        "memoryMbytes": 512
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "title": "Bluesky Posts Scraper input",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "searchQueries": {
+            "title": "Search queries",
+            "type": "array",
+            "description": "Keywords or phrases to search Bluesky posts for. Supports quoted phrases, from:handle, and hashtags.",
+            "editor": "stringList",
+            "prefill": ["artificial intelligence"]
+        },
+        "profiles": {
+            "title": "Profiles",
+            "type": "array",
+            "description": "Bluesky handles to scrape posts from (e.g. bsky.app or user.bsky.social). '@' prefix is optional.",
+            "editor": "stringList"
+        },
+        "maxPosts": {
+            "title": "Max posts per query/profile",
+            "type": "integer",
+            "description": "Maximum number of posts to fetch for each search query or profile.",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 10000
+        },
+        "sortBy": {
+            "title": "Sort search results by",
+            "type": "string",
+            "description": "How to sort keyword search results. Ignored for profiles (always newest first).",
+            "enum": ["latest", "top"],
+            "enumTitles": ["Latest", "Top"],
+            "default": "latest"
+        },
+        "sinceDate": {
+            "title": "Only posts after (YYYY-MM-DD)",
+            "type": "string",
+            "description": "Optional. Only include posts created on or after this date.",
+            "editor": "textfield"
+        },
+        "includeReplies": {
+            "title": "Include replies",
+            "type": "boolean",
+            "description": "Include reply posts when scraping profiles.",
+            "default": false
+        },
+        "includeReposts": {
+            "title": "Include reposts",
+            "type": "boolean",
+            "description": "Include reposts when scraping profiles.",
+            "default": false
+        }
+    }
+}
