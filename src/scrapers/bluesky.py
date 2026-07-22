@@ -7,7 +7,7 @@ from typing import Any
 
 import httpx
 
-API = "https://api.bsky.app/xrpc"
+API = "https://public.api.bsky.app/xrpc"
 PAGE_SIZE = 100
 HEADERS = {"User-Agent": "bluesky-posts-scraper/1.0 (Apify actor)"}
 
