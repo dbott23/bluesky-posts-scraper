@@ -92,3 +92,6 @@ Yes. Set `sinceDate` to an ISO date string (e.g. `"2026-01-01"`) to only collect
 | [B2B Reviews Scraper](https://apify.com/dbott23/b2b-reviews-scraper) | Pull reviews from G2, Capterra, and Trustpilot in one run |
 | [AI Brand Visibility Tracker](https://apify.com/dbott23/ai-brand-visibility-tracker) | Track how AI assistants mention your brand vs. competitors |
 | [AI Citation Auditor](https://apify.com/dbott23/ai-citation-auditor) | Check if your website is cited by ChatGPT, Perplexity, and Gemini |
+| [Reddit Posts Scraper](https://apify.com/dbott23/reddit-posts-scraper) | Scrape posts, comments, and user histories from any subreddit |
+| [YouTube Comments Scraper](https://apify.com/dbott23/youtube-comments-scraper) | Export comments from any YouTube video — no proxies needed |
+| [Google Maps Reviews Scraper](https://apify.com/dbott23/google-maps-reviews-scraper) | Extract reviews from any Google Maps business listing |
