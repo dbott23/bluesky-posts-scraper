@@ -1,0 +1,13 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "Bluesky posts",
+    "description": "Scraped Bluesky posts, stored in the default dataset.",
+    "properties": {
+        "posts": {
+            "type": "string",
+            "title": "Posts",
+            "description": "All scraped posts with text, author, engagement metrics and dates.",
+            "template": "{{links.apiDefaultDatasetUrl}}/items"
+        }
+    }
+}
