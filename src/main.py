@@ -95,6 +95,11 @@ async def main() -> None:
                 )
             )
             return
+        if total == 0:
+            await Actor.set_status_message(
+                f"No posts found. The sources may genuinely have none, or the input may not "
+                f"match anything — check the run log for the requests that were made."
+            )
         if failures:
             Actor.log.warning(
                 f"{len(failures)} source(s) failed but {total} item(s) were scraped "
