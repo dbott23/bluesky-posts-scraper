@@ -30,6 +30,8 @@ async def main() -> None:
             return
 
         total = 0
+        # Sources that failed outright; used to avoid a green run with no data.
+        failures: list[str] = []
         async with httpx.AsyncClient() as client:
             auth_token: str | None = None
             if queries:
@@ -54,7 +56,8 @@ async def main() -> None:
                         client, query, max_posts, sort=sort_by, since=since, auth_token=auth_token
                     )
                 except Exception as exc:
-                    Actor.log.warning(f"Search failed for {query!r}: {exc}")
+                    Actor.log.error(f"Search failed for {query!r}: {exc}")
+                    failures.append(f"search {query!r}: {exc}")
                     continue
                 if posts:
                     await Actor.push_data(posts)
@@ -73,7 +76,8 @@ async def main() -> None:
                         since=since,
                     )
                 except Exception as exc:
-                    Actor.log.warning(f"Profile scrape failed for {profile}: {exc}")
+                    Actor.log.error(f"Profile scrape failed for {profile}: {exc}")
+                    failures.append(f"profile {profile}: {exc}")
                     continue
                 if posts:
                     await Actor.push_data(posts)
@@ -81,6 +85,21 @@ async def main() -> None:
                 Actor.log.info(f"  → {len(posts)} posts for {profile} (total: {total})")
 
         Actor.log.info(f"Done. Total posts pushed: {total}")
+
+        # A green run with an empty dataset tells the user nothing. Fail with the reason.
+        if total == 0 and failures:
+            await Actor.fail(
+                status_message=(
+                    f"Nothing scraped — all {len(failures)} source(s) failed. "
+                    f"First error: {failures[0]}"
+                )
+            )
+            return
+        if failures:
+            Actor.log.warning(
+                f"{len(failures)} source(s) failed but {total} item(s) were scraped "
+                f"from the rest. First error: {failures[0]}"
+            )
 
 
 if __name__ == "__main__":
