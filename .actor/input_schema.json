@@ -7,14 +7,14 @@
             "title": "Search queries",
             "type": "array",
             "description": "Keywords or phrases to search Bluesky posts for. Supports quoted phrases, from:handle, and hashtags.",
-            "editor": "stringList",
-            "prefill": ["artificial intelligence"]
+            "editor": "stringList"
         },
         "profiles": {
             "title": "Profiles",
             "type": "array",
             "description": "Bluesky handles to scrape posts from (e.g. bsky.app or user.bsky.social). '@' prefix is optional.",
-            "editor": "stringList"
+            "editor": "stringList",
+            "prefill": ["bsky.app"]
         },
         "maxPosts": {
             "title": "Max posts per query/profile",
