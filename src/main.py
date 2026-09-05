@@ -44,10 +44,22 @@ async def main() -> None:
                         await Actor.fail(status_message=f"Authentication failed: {exc}")
                         return
                 else:
+                    # Bluesky disabled anonymous search: the public searchPosts
+                    # endpoint now returns 403. Without credentials the search
+                    # calls are guaranteed to fail, so skip them and tell the
+                    # user exactly what to do instead of retrying a dead endpoint.
                     Actor.log.warning(
-                        "No Bluesky credentials provided — search requires authentication. "
-                        "Add blueskyIdentifier and blueskyAppPassword to input."
+                        "Skipping keyword search: Bluesky no longer allows anonymous "
+                        "search (the public API returns 403). To search, add "
+                        "blueskyIdentifier and blueskyAppPassword to the input. "
+                        "Profile scraping works without credentials."
                     )
+                    for query in queries:
+                        failures.append(
+                            f"search {query!r}: skipped — keyword search requires "
+                            f"Bluesky credentials (blueskyIdentifier + blueskyAppPassword)"
+                        )
+                    queries = []
 
             for query in queries:
                 Actor.log.info(f"Searching posts for: {query!r}")
